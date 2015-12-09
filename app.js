@@ -1,3 +1,4 @@
+var utils = require('./utils');
 var request = require('request');
 var html = require('htmlparser2');
 var $ = require('cheerio');
@@ -49,12 +50,11 @@ async.parallel([
         });
     }
 ], function (err, result) {
-
     var horasTren = result[0];
     var salida = result[1];
     var comprobar = 7000;
     setInterval(function () {
-        var horaActual = formatAMPM(date.getHours());
+        var horaActual = utils.formatAMPM(date.getHours());
 
         if (salida < horaActual) {
             console.log(true, salida, horaActual);
@@ -67,24 +67,3 @@ async.parallel([
 
 
 });
-
-
-
-
-
-
-
-
-function formatAMPM(date) {
-    var date = new Date();
-    var hours = date.getHours();
-    var minutes = date.getMinutes();
-    var ampm = hours >= 12 ? 'pm' : 'am';
-    hours = hours % 12;
-    hours = hours ? hours : 12; // the hour '0' should be '12'
-    hours = hours < 10 ? '0' + hours : hours;
-    minutes = minutes < 10 ? '0' + minutes : minutes;
-
-    var strTime = hours + ':' + minutes + ' ';
-    return strTime;
-}
