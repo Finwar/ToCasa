@@ -15,5 +15,9 @@
     "play-audio": "^0.1.0",
     "play-sound": "0.0.7",
     "request": "^2.67.0"
+  },
+  "dependencies": {
+    "beepbeep": "^1.2.0",
+    "dialog": "^0.1.8"
   }
 }
