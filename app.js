@@ -1,4 +1,6 @@
 var utils = require('./utils');
+
+
 var request = require('request');
 var $ = require('cheerio');
 var async = require('async');
@@ -8,7 +10,7 @@ var dialog = require('dialog');
 
 //TODO: Notificar Movil.
 
-var renfeUrl = 'http://horarios.renfe.com/cer/hjcer310.jsp?&nucleo=50&o=79009&d=79011&tc=DIA&td=D&df=20151208&th=1&ho=00&i=s&cp=NO&TXTInfo=';
+var renfeUrl = 'http://horarios.renfe.com/cer/hjcer310.jsp?&nucleo=50&o=79009&d=79011&tc=DIA&td=D&df=20151214&th=1&ho=00&i=s&cp=NO&TXTInfo=';
 var myExcelJson = 'https://spreadsheets.google.com/feeds/list/1137gfrD-PQHB_0oAP2-UHGtLU3gpYFt2ak_O_I9AG2s/od6/public/basic?alt=json';
 
 
@@ -19,7 +21,15 @@ async.parallel([
     function (callback) {
         request(renfeUrl, function (error, response, body) {
             //parser.write(body);
-            var tiempos = $('tr', body).find('.color2').text();
+            var tiemposArr = $('tr', body).find('.color1');
+            var tiempos = [];
+            for (var i = 0; i < tiemposArr.length; i++) {
+                if ($(tiemposArr[i]).text() !== '0.13' && $(tiemposArr[i]).text() !== '0.14') {
+                    tiempos.push($(tiemposArr[i]).text());
+                }
+
+            }
+            /*console.log(tiempos);
             var hora = "";
             var horas = [];
             for (var i = 1; i < tiempos.length; i++) {
@@ -28,8 +38,8 @@ async.parallel([
                     horas.push(hora);
                     hora = "";
                 }
-            }
-            callback(error, horas);
+            }*/
+            callback(error, tiempos);
         });
     },
     function (callback) {
@@ -56,7 +66,7 @@ async.parallel([
     var horasTren = result[0];
     var salida = result[1];
     var comprobar = 7000;
-    var media = 25;
+    var media = 30;
     console.log(horasTren);
     setInterval(function () {
         date = new Date();
@@ -66,9 +76,14 @@ async.parallel([
         if (salida < horaActual) {
             date.setMinutes(date.getMinutes() + media);
             horaActual = date.getHours() + ":" + date.getMinutes();
-            for (var i = horasTren.length / 2; i < horasTren.length; i++) {
+            for (var i = Math.round(horasTren.length / 2); i < horasTren.length; i++) {
+                console.log(horasTren[i], i);
                 var horatren = horasTren[i].replace(".", ":");
+                /*horatren = horatren.split(":");
+                horatren[1] -= 13;
+                horatren = horatren[0] + ":" + horatren[1];*/
                 if (horaActual < horatren) {
+                    console.log(horatren);
                     if (horaActual === horatren) {
                         console.log(true, horaActual, horatren);
                         beep();
@@ -76,6 +91,7 @@ async.parallel([
                     }
 
                 } else {
+                    console.log(horatren, horaActual);
                     console.log(false);
                 }
             }

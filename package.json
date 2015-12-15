@@ -18,6 +18,8 @@
   },
   "dependencies": {
     "beepbeep": "^1.2.0",
-    "dialog": "^0.1.8"
+    "dialog": "^0.1.8",
+    "jQuery": "^1.7.4",
+    "jsdom": "^7.2.1"
   }
 }
